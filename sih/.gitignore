@@ -1,0 +1,55 @@
+# Environments & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python
+backend/.venv/
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/build/
+backend/develop-eggs/
+backend/dist/
+backend/downloads/
+backend/eggs/
+backend/.eggs/
+backend/lib/
+backend/lib64/
+backend/parts/
+backend/sdist/
+backend/var/
+backend/wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node & Next.js
+frontend/node_modules/
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+.npm
+*.tsbuildinfo
+next-env.d.ts
+
+# SQLite local database
+*.db
+*.sqlite3
+
+# Docker & OS
+.DS_Store
+Thumbs.db
+*.log
+docker-data/
+postgres_data/
