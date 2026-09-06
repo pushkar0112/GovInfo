@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import date, datetime
 from pydantic import BaseModel, Field, ConfigDict
-from app.models.procurement import ProcurementPathway, ProcurementStatus
+from app.models.procurement import ProcurementPathwayLegacy as ProcurementPathway, ProcurementStatus
 
 
 class ValidationCreateRequest(BaseModel):
@@ -46,16 +46,16 @@ class ProcurementCreateRequest(BaseModel):
 
 class ProcurementResponse(BaseModel):
     id: str
-    validation_id: str
+    validation_id: Optional[str] = None
     department_id: str
     department_name: Optional[str] = None
     startup_id: str
     startup_name: Optional[str] = None
     sanction_order_number: Optional[str] = None
     gem_contract_number: Optional[str] = None
-    procurement_pathway: ProcurementPathway
+    procurement_pathway: Optional[str] = None
     total_order_value: float
-    status: ProcurementStatus
+    status: Optional[str] = None
     order_date: Optional[date] = None
     notes: Optional[str] = None
     created_at: datetime

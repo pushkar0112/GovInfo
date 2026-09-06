@@ -7,17 +7,19 @@ from app.core.config import settings
 logger = logging.getLogger("govinnovate.database")
 
 # Handle SQLite vs PostgreSQL specific engine arguments
-connect_args = {}
 if settings.DATABASE_URL.startswith("sqlite"):
-    connect_args["check_same_thread"] = False
-
-# Create engine with appropriate pooling
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args=connect_args,
-    pool_pre_ping=True,  # Test connections before handing them out
-    echo=False,
-)
+    from sqlalchemy.pool import StaticPool
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+else:
+    engine = create_engine(
+        settings.DATABASE_URL,
+        pool_pre_ping=True,
+        echo=False,
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

@@ -23,4 +23,3 @@ class Validation(Base, BaseModelMixin):
     # Relationships
     pilot = relationship("Pilot", back_populates="validation")
     validator = relationship("User", foreign_keys=[validator_id])
-    procurement_record = relationship("ProcurementRecord", back_populates="validation", uselist=False)

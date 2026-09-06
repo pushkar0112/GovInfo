@@ -13,6 +13,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader2,
+  Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,9 @@ export function AuthModal({
   const [companyName, setCompanyName] = useState("");
   const [dpiitNumber, setDpiitNumber] = useState("");
   const [sector, setSector] = useState("CivicTech");
+  const [organizationName, setOrganizationName] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [domainExpertise, setDomainExpertise] = useState("Artificial Intelligence & Data Analytics");
 
   if (!isOpen) return null;
 
@@ -74,6 +78,10 @@ export function AuthModal({
           payload.company_name = companyName;
           payload.dpiit_number = dpiitNumber;
           payload.sector = sector;
+        } else if (role === "EXPERT" || role === "EXPERT_EVALUATOR") {
+          payload.organization_name = organizationName;
+          payload.designation = designation;
+          payload.domain_expertise = domainExpertise;
         }
 
         const user = await register(payload);
@@ -111,25 +119,25 @@ export function AuthModal({
             </button>
           </div>
           <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-            Secure, role-based gateway for Government Departments and DPIIT Startups.
+            Secure, role-based gateway for Government Departments, DPIIT Startups, and Empanelled Experts.
           </p>
 
           {/* Role Tabs */}
-          <div className="grid grid-cols-2 gap-2 mt-4 p-1 bg-blue-950/60 rounded-lg text-xs font-medium">
+          <div className="grid grid-cols-3 gap-1.5 mt-4 p-1 bg-blue-950/60 rounded-lg text-xs font-medium">
             <button
               type="button"
               onClick={() => {
                 setRole("GOVERNMENT");
                 setErrorMessage(null);
               }}
-              className={`flex items-center justify-center gap-2 py-2 rounded-md transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-md transition-all ${
                 role === "GOVERNMENT"
                   ? "bg-white text-[#0B2545] font-semibold shadow-xs"
                   : "text-slate-300 hover:text-white"
               }`}
             >
               <Building2 className="w-3.5 h-3.5 text-amber-500" />
-              Government Portal
+              <span className="truncate">Government</span>
             </button>
             <button
               type="button"
@@ -137,14 +145,29 @@ export function AuthModal({
                 setRole("STARTUP");
                 setErrorMessage(null);
               }}
-              className={`flex items-center justify-center gap-2 py-2 rounded-md transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-md transition-all ${
                 role === "STARTUP"
                   ? "bg-white text-slate-900 font-semibold shadow-xs"
                   : "text-slate-300 hover:text-white"
               }`}
             >
               <Rocket className="w-3.5 h-3.5 text-amber-600" />
-              Startup Portal
+              <span className="truncate">Startup</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setRole("EXPERT");
+                setErrorMessage(null);
+              }}
+              className={`flex items-center justify-center gap-1.5 py-2 px-1 rounded-md transition-all ${
+                role === "EXPERT" || role === "EXPERT_EVALUATOR"
+                  ? "bg-white text-blue-950 font-semibold shadow-xs"
+                  : "text-slate-300 hover:text-white"
+              }`}
+            >
+              <Award className="w-3.5 h-3.5 text-amber-400" />
+              <span className="truncate">Expert</span>
             </button>
           </div>
         </div>
@@ -158,10 +181,14 @@ export function AuthModal({
                 {isRegister
                   ? role === "GOVERNMENT"
                     ? "Register Government Department"
-                    : "Register DPIIT Startup"
+                    : role === "STARTUP"
+                    ? "Register DPIIT Startup"
+                    : "Register Domain Expert Evaluator"
                   : role === "GOVERNMENT"
                   ? "Government Official Sign In"
-                  : "Startup Innovator Sign In"}
+                  : role === "STARTUP"
+                  ? "Startup Innovator Sign In"
+                  : "Expert Evaluator Sign In"}
               </h3>
               <span className="text-xs text-slate-500">
                 {isRegister
@@ -254,7 +281,7 @@ export function AuthModal({
                       />
                     </div>
                   </>
-                ) : (
+                ) : role === "STARTUP" ? (
                   <>
                     <div>
                       <label className="block text-xs font-medium text-slate-700 mb-1">
@@ -298,6 +325,50 @@ export function AuthModal({
                           <option value="CleanTech">CleanTech</option>
                         </select>
                       </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
+                          Organization / Institute
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={organizationName}
+                          onChange={(e) => setOrganizationName(e.target.value)}
+                          placeholder="e.g., IIT Delhi / CSIR"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#0B2545] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
+                          Designation / Title
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={designation}
+                          onChange={(e) => setDesignation(e.target.value)}
+                          placeholder="e.g., Professor / Tech Advisor"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#0B2545] focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                        Domain Expertise
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={domainExpertise}
+                        onChange={(e) => setDomainExpertise(e.target.value)}
+                        placeholder="e.g., AI & Machine Learning, Hydrology, Drone Sensors"
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#0B2545] focus:outline-none"
+                      />
                     </div>
                   </>
                 )}

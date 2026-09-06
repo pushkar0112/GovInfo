@@ -40,6 +40,7 @@ interface ChallengeDetail {
   currency: string;
   pilot_duration_days: number;
   application_deadline?: string;
+  problem_statement?: string;
   kpis?: {
     id: string;
     name: string;

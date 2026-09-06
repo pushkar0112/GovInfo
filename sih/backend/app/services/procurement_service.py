@@ -157,7 +157,12 @@ class ProcurementService:
 
     @classmethod
     def list_procurement_records(cls, db: Session) -> List[ProcurementResponse]:
-        records = db.query(ProcurementRecord).order_by(ProcurementRecord.created_at.desc()).all()
+        records = (
+            db.query(ProcurementRecord)
+            .filter(ProcurementRecord.validation_id.isnot(None))
+            .order_by(ProcurementRecord.created_at.desc())
+            .all()
+        )
         return [cls.format_procurement_response(r) for r in records]
 
     @staticmethod
@@ -193,17 +198,25 @@ class ProcurementService:
         dp_name = r.department.name if r.department else None
         st_name = r.startup.company_name if r.startup else None
 
+        pathway = r.procurement_pathway
+        if not pathway and hasattr(r, "pathway") and r.pathway:
+            pathway = r.pathway.code
+        if hasattr(pathway, "value"):
+            pathway = pathway.value
+
+        tot_val = float(r.total_order_value) if r.total_order_value is not None else float(r.estimated_value or 0.0)
+
         return ProcurementResponse(
             id=r.id,
-            validation_id=r.validation_id,
-            department_id=r.department_id,
+            validation_id=r.validation_id or "",
+            department_id=r.department_id or (r.government_department_id or ""),
             department_name=dp_name,
             startup_id=r.startup_id,
             startup_name=st_name,
             sanction_order_number=r.sanction_order_number,
             gem_contract_number=r.gem_contract_number,
-            procurement_pathway=r.procurement_pathway,
-            total_order_value=float(r.total_order_value),
+            procurement_pathway=pathway,
+            total_order_value=tot_val,
             status=r.status,
             order_date=r.order_date,
             notes=r.notes,

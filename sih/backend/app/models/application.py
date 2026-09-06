@@ -90,7 +90,8 @@ class Application(Base, BaseModelMixin):
     challenge = relationship("Challenge", back_populates="applications")
     startup = relationship("Startup", back_populates="applications")
     submitter = relationship("User", foreign_keys=[submitted_by])
-    evaluations = relationship("Evaluation", back_populates="application")
+    evaluations = relationship("Evaluation", back_populates="application", cascade="all, delete-orphan")
+    evaluation_assignments = relationship("EvaluationAssignment", back_populates="application", cascade="all, delete-orphan")
     pilot = relationship("Pilot", back_populates="application", uselist=False)
 
     # Indexes

@@ -16,9 +16,7 @@ client = TestClient(app)
 @pytest.fixture(autouse=True)
 def setup_database():
     """Ensure a clean database schema for each test run."""
-    with engine.connect() as conn:
-        conn.execute(sa.text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
-        conn.commit()
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     yield
 

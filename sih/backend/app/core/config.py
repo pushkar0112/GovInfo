@@ -49,8 +49,8 @@ class Settings(BaseSettings):
         return ["http://localhost:3000"]
 
     # Database
-    # Default is PostgreSQL, but allows SQLite for local zero-dependency testing
-    DATABASE_URL: str = "postgresql://govinnovate:govinnovate_secure_pass@localhost:5432/govinnovate_db"
+    # Default is PostgreSQL on 127.0.0.1, preventing Windows IPv6 (::1) resolution drops
+    DATABASE_URL: str = "postgresql://govinnovate:govinnovate_secure_pass@127.0.0.1:5432/govinnovate_db"
 
 
 settings = Settings()

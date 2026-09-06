@@ -42,6 +42,8 @@ services:
       API_V1_STR: /api/v1
     ports:
       - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
     depends_on:
       postgres:
         condition: service_healthy

@@ -406,8 +406,15 @@ class ChallengeService:
 
         if not challenge.application_deadline:
             missing.append("Application submission deadline")
-        elif challenge.application_deadline <= utc_now():
-            missing.append("Application deadline must be a future date and time")
+        else:
+            dl = challenge.application_deadline
+            if dl.tzinfo is None:
+                dl = dl.replace(tzinfo=timezone.utc)
+            now = utc_now()
+            if now.tzinfo is None:
+                now = now.replace(tzinfo=timezone.utc)
+            if dl <= now:
+                missing.append("Application deadline must be a future date and time")
 
         if not challenge.pilot_duration_days or challenge.pilot_duration_days <= 0:
             missing.append("Estimated pilot sandbox duration in days")

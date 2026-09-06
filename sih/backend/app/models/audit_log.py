@@ -21,11 +21,19 @@ class AuditLog(Base, BaseModelMixin):
     # Relationships
     user = relationship("User", foreign_keys=[user_id])
 
-    # Backward compatibility property for details_json
+    # Backward compatibility property for details_json and details
     @property
     def details_json(self) -> str:
         return self.metadata_json or ""
 
     @details_json.setter
     def details_json(self, value: str):
+        self.metadata_json = value
+
+    @property
+    def details(self) -> str:
+        return self.metadata_json or ""
+
+    @details.setter
+    def details(self, value: str):
         self.metadata_json = value

@@ -22,6 +22,7 @@ class ChallengeStatus(str, enum.Enum):
     ARCHIVED = "ARCHIVED"
 
     # Legacy statuses for backward compatibility with downstream stage models
+    ACTIVE = "ACTIVE"
     APPLICATIONS_CLOSED = "APPLICATIONS_CLOSED"
     EVALUATION_ACTIVE = "EVALUATION_ACTIVE"
     PILOT_STAGE = "PILOT_STAGE"
@@ -83,6 +84,7 @@ class Challenge(Base, BaseModelMixin):
     department = relationship("Department", back_populates="challenges")
     creator = relationship("User", back_populates="challenges_created", foreign_keys=[created_by])
     kpis = relationship("ChallengeKPI", back_populates="challenge", cascade="all, delete-orphan", order_by="ChallengeKPI.created_at")
+    evaluation_criteria = relationship("EvaluationCriteria", back_populates="challenge", cascade="all, delete-orphan", order_by="EvaluationCriteria.display_order")
     applications = relationship("Application", back_populates="challenge")
 
     # Backward compatibility properties for Step 1 / test suites

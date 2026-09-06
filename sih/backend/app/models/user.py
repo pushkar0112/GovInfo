@@ -44,6 +44,9 @@ class User(Base, BaseModelMixin):
     department = relationship("Department", back_populates="officers", foreign_keys=[department_id])
     startup = relationship("Startup", back_populates="users", foreign_keys=[startup_id])
     challenges_created = relationship("Challenge", back_populates="creator", foreign_keys="Challenge.created_by")
+    expert_profile = relationship("ExpertProfile", uselist=False, back_populates="user", cascade="all, delete-orphan")
+    assignments_as_expert = relationship("EvaluationAssignment", foreign_keys="EvaluationAssignment.expert_id", back_populates="expert")
+    assignments_made = relationship("EvaluationAssignment", foreign_keys="EvaluationAssignment.assigned_by", back_populates="assigner")
 
     # Backward compatibility property for hashed_password
     @property

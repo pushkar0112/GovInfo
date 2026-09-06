@@ -28,7 +28,13 @@ import {
   Info,
   Layers,
   ChevronRight,
+  Award,
+  BarChart3,
+  Star,
+  UserCheck,
+  FlaskConical,
 } from "lucide-react";
+import { PilotCreationWizardModal } from "@/components/pilots/PilotCreationWizardModal";
 
 interface GovApplicationDetail {
   id: string;
@@ -72,6 +78,40 @@ interface GovApplicationDetail {
   updated_at?: string;
 }
 
+interface EvaluationSummary {
+  application_id: string;
+  average_score?: number | null;
+  highest_score?: number | null;
+  lowest_score?: number | null;
+  completed_evaluations_count: number;
+  assigned_evaluations_count: number;
+  recommendations_summary: Record<string, number>;
+  evaluations: {
+    id: string;
+    expert_id: string;
+    expert_name: string;
+    expert_organization?: string | null;
+    overall_score?: number | null;
+    recommendation?: string | null;
+    overall_comments?: string | null;
+    is_submitted: boolean;
+    submitted_at?: string | null;
+    scores: {
+      id: string;
+      criterion_id: string;
+      criterion_name: string;
+      criterion_description?: string;
+      weight: number;
+      max_score: number;
+      score: number;
+      normalized_score: number;
+      weighted_score: number;
+      comment?: string | null;
+      evidence_reference?: string | null;
+    }[];
+  }[];
+}
+
 export default function GovernmentApplicationReviewPage() {
   const params = useParams();
   const router = useRouter();
@@ -79,6 +119,7 @@ export default function GovernmentApplicationReviewPage() {
   const { currentUser } = useAuth();
 
   const [application, setApplication] = useState<GovApplicationDetail | null>(null);
+  const [evaluationsSummary, setEvaluationsSummary] = useState<EvaluationSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,6 +128,7 @@ export default function GovernmentApplicationReviewPage() {
   const [reviewNotes, setReviewNotes] = useState("");
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [statusSuccess, setStatusSuccess] = useState<string | null>(null);
+  const [pilotWizardOpen, setPilotWizardOpen] = useState(false);
 
   const fetchApplication = async () => {
     setLoading(true);
@@ -96,6 +138,14 @@ export default function GovernmentApplicationReviewPage() {
       setApplication(data);
       if (data.review_notes) {
         setReviewNotes(data.review_notes);
+      }
+
+      // Fetch transparent multi-expert evaluations
+      try {
+        const evData = await apiRequest<EvaluationSummary>(`/api/v1/government/applications/${applicationId}/evaluations`);
+        setEvaluationsSummary(evData);
+      } catch {
+        // Non-blocking if not yet evaluated or assigned
       }
     } catch (err: any) {
       setError(err.message || "Failed to load application details.");
@@ -253,6 +303,17 @@ export default function GovernmentApplicationReviewPage() {
                 <Clock className="w-3.5 h-3.5 text-blue-500" />
                 <span>Pilot Timeline: {application.timeline_days || 90} Days</span>
               </div>
+              {evaluationsSummary?.average_score !== null && evaluationsSummary?.average_score !== undefined && (
+                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md">
+                  <Award className="w-3.5 h-3.5 text-amber-600" />
+                  <span className="font-bold text-amber-900">
+                    Composite Score: {evaluationsSummary.average_score.toFixed(1)} / 100
+                  </span>
+                  <span className="text-slate-400 text-[10px]">
+                    ({evaluationsSummary.completed_evaluations_count} evaluations)
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -406,6 +467,161 @@ export default function GovernmentApplicationReviewPage() {
                   </div>
                 </div>
               )}
+
+              {/* Step 5: Expert Evaluation & Transparent Scoring Dossier */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Award className="w-4 h-4 text-[#0B2545]" />
+                    <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                      Expert Evaluation & Transparent Scoring Dossier
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Link href={`/government/challenges/${application.challenge_id}/evaluations`}>
+                      <Button variant="outline" size="sm" className="text-[11px] h-7 gap-1 border-slate-200 text-blue-900">
+                        <BarChart3 className="w-3 h-3" />
+                        Evaluation Hub & Assign Experts
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+
+                {evaluationsSummary && evaluationsSummary.completed_evaluations_count > 0 ? (
+                  <div className="space-y-4">
+                    {/* Summary Metric Strip */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Average Composite Score</span>
+                        <span className="text-base font-extrabold text-[#0B2545]">
+                          {evaluationsSummary.average_score !== null ? evaluationsSummary.average_score?.toFixed(1) : "—"}
+                          <span className="text-xs font-normal text-slate-400"> / 100</span>
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Highest Score</span>
+                        <span className="text-base font-extrabold text-emerald-700">
+                          {evaluationsSummary.highest_score !== null ? evaluationsSummary.highest_score?.toFixed(1) : "—"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Completed Reviews</span>
+                        <span className="text-base font-extrabold text-slate-800">
+                          {evaluationsSummary.completed_evaluations_count} / {evaluationsSummary.assigned_evaluations_count}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Recommendations</span>
+                        <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                          {Object.entries(evaluationsSummary.recommendations_summary).map(([rec, count]) => (
+                            <Badge key={rec} variant={rec.includes("RECOMMEND") ? "success" : "secondary"} className="text-[9px] py-0 px-1.5">
+                              {count}x {rec.replace(/_/g, " ")}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Per-Expert Scoring Cards */}
+                    <div className="space-y-3">
+                      {evaluationsSummary.evaluations.map((ev, idx) => (
+                        <div key={ev.id || idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                            <div className="flex items-center gap-2">
+                              <UserCheck className="w-4 h-4 text-blue-900" />
+                              <span className="font-bold text-xs text-slate-900">{ev.expert_name}</span>
+                              {ev.expert_organization && (
+                                <span className="text-[11px] text-slate-500">({ev.expert_organization})</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {ev.recommendation && (
+                                <Badge
+                                  variant={
+                                    ev.recommendation.includes("STRONGLY")
+                                      ? "success"
+                                      : ev.recommendation.includes("RECOMMEND")
+                                      ? "gov"
+                                      : "destructive"
+                                  }
+                                  className="text-[10px]"
+                                >
+                                  {ev.recommendation.replace(/_/g, " ")}
+                                </Badge>
+                              )}
+                              <span className="font-mono font-extrabold text-xs text-blue-900 bg-white px-2 py-0.5 rounded border border-blue-100">
+                                {ev.overall_score !== null ? ev.overall_score?.toFixed(1) : "—"} / 100
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Criterion breakdown */}
+                          {ev.scores && ev.scores.length > 0 && (
+                            <div className="space-y-1.5">
+                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                                Weighted Criteria Contribution
+                              </span>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {ev.scores.map((sc) => (
+                                  <div key={sc.criterion_id} className="p-2.5 rounded-lg bg-white border border-slate-200 text-xs space-y-1">
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-semibold text-slate-800 text-[11px] truncate max-w-[150px]">
+                                        {sc.criterion_name}
+                                      </span>
+                                      <span className="font-bold text-blue-950 text-[11px]">
+                                        {sc.score}/{sc.max_score} <span className="text-[10px] text-slate-400">({sc.weight}% wt)</span>
+                                      </span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                      <div
+                                        className="bg-blue-900 h-full rounded-full transition-all"
+                                        style={{ width: `${Math.min(100, (sc.score / sc.max_score) * 100)}%` }}
+                                      />
+                                    </div>
+                                    {sc.comment && (
+                                      <p className="text-[10px] text-slate-500 italic truncate pt-0.5">
+                                        &ldquo;{sc.comment}&rdquo;
+                                      </p>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Qualitative feedback */}
+                          {ev.overall_comments && (
+                            <div className="pt-2 border-t border-slate-100 text-xs">
+                              <span className="font-semibold text-slate-700 block mb-0.5 text-[11px]">Expert Qualitative Feedback:</span>
+                              <p className="text-slate-600 bg-white p-2.5 rounded-lg border border-slate-100 leading-relaxed text-[11px]">
+                                {ev.overall_comments}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2 text-xs text-slate-500">
+                    <Award className="w-8 h-8 text-slate-400 mx-auto" />
+                    <p className="font-medium text-slate-700">
+                      {evaluationsSummary && evaluationsSummary.assigned_evaluations_count > 0
+                        ? `${evaluationsSummary.assigned_evaluations_count} expert evaluator(s) assigned. Awaiting submission.`
+                        : "No expert evaluations recorded yet for this proposal."}
+                    </p>
+                    <p className="text-[11px] text-slate-400">
+                      Assign domain experts from the Challenge Evaluation Hub to conduct transparent multi-criteria assessment.
+                    </p>
+                    <Link href={`/government/challenges/${application.challenge_id}/evaluations`}>
+                      <Button variant="gov" size="sm" className="mt-2 text-xs gap-1.5 shadow-xs">
+                        <BarChart3 className="w-3.5 h-3.5 text-amber-400" />
+                        Go to Challenge Evaluation Hub
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Right: Decision Panel & Pre-Screening Snapshot */}
@@ -432,7 +648,7 @@ export default function GovernmentApplicationReviewPage() {
                     </Button>
                   )}
 
-                  {application.status !== "SHORTLISTED" && (
+                  {application.status !== "SHORTLISTED" && application.status !== "SELECTED_FOR_PILOT" && (
                     <Button
                       variant="gov"
                       size="sm"
@@ -441,6 +657,48 @@ export default function GovernmentApplicationReviewPage() {
                     >
                       <CheckCircle2 className="w-4 h-4" /> Shortlist for Pilot Sandbox Grant
                     </Button>
+                  )}
+
+                  {application.status === "SHORTLISTED" && (
+                    <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 space-y-2">
+                      <div className="flex items-center gap-1.5 font-bold text-xs">
+                        <Sparkles className="w-4 h-4 text-emerald-600" />
+                        Proposal Shortlisted for Pilot Grant
+                      </div>
+                      <p className="text-[11px] text-emerald-800 leading-relaxed">
+                        Commission an operational sandbox trial with defined milestones, weighting, and deliverables.
+                      </p>
+                      <Button
+                        variant="gov"
+                        size="sm"
+                        onClick={() => setPilotWizardOpen(true)}
+                        className="w-full text-xs font-bold justify-center gap-2 bg-[#0B2545] hover:bg-[#133A6B] text-white shadow-xs"
+                      >
+                        <FlaskConical className="w-4 h-4 text-amber-400" />
+                        Create Operational Pilot Sandbox
+                      </Button>
+                    </div>
+                  )}
+
+                  {application.status === "SELECTED_FOR_PILOT" && (
+                    <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-blue-900 space-y-2">
+                      <div className="flex items-center gap-1.5 font-bold text-xs">
+                        <FlaskConical className="w-4 h-4 text-blue-600" />
+                        Operational Sandbox Commissioned
+                      </div>
+                      <p className="text-[11px] text-blue-800 leading-relaxed">
+                        An operational sandbox pilot is active for this startup proposal.
+                      </p>
+                      <Link href="/government/pilots">
+                        <Button
+                          variant="gov"
+                          size="sm"
+                          className="w-full text-xs font-bold justify-center gap-2 mt-1"
+                        >
+                          <FlaskConical className="w-4 h-4 text-amber-400" /> View in Pilot Portfolio
+                        </Button>
+                      </Link>
+                    </div>
                   )}
 
                   {application.status !== "REJECTED" && (
@@ -574,6 +832,18 @@ export default function GovernmentApplicationReviewPage() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Pilot Sandbox Creation Wizard Modal */}
+        {application && (
+          <PilotCreationWizardModal
+            isOpen={pilotWizardOpen}
+            onClose={() => setPilotWizardOpen(false)}
+            application={application}
+            onPilotCreated={() => {
+              fetchApplication();
+            }}
+          />
         )}
       </div>
     </ProtectedRoute>

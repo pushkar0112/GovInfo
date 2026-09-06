@@ -22,6 +22,15 @@ import {
   LayoutDashboard,
   LogIn,
   UserPlus,
+  Award,
+  FlaskConical,
+  ShieldCheck,
+  Coins,
+  FileText,
+  CreditCard,
+  TrendingUp,
+  BarChart3,
+  Globe,
 } from "lucide-react";
 
 export function Navbar() {
@@ -137,6 +146,151 @@ export function Navbar() {
               >
                 Procurement Law Alignment
               </a>
+              {(currentUser?.role === "GOVERNMENT" || currentUser?.role === "ADMIN") && (
+                <>
+                  <Link
+                    href="/government/pilots"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <FlaskConical className="w-3.5 h-3.5 text-cyan-600" />
+                    Pilots Sandbox
+                  </Link>
+                  <Link
+                    href="/government/validation"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Validation
+                  </Link>
+                  <Link
+                    href="/government/procurement"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                    Procurement
+                  </Link>
+                  <Link
+                    href="/government/contracts"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <Coins className="w-3.5 h-3.5 text-emerald-600" />
+                    Contracts
+                  </Link>
+                  <Link
+                    href="/government/payments"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <CreditCard className="w-3.5 h-3.5 text-purple-600" />
+                    Payments
+                  </Link>
+                  <Link
+                    href="/government/scale-up"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+                    Scale-Up
+                    <Badge variant="gov" className="text-[9px] py-0 px-1">Step 9</Badge>
+                  </Link>
+                  <Link
+                    href="/government/impact"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <BarChart3 className="w-3.5 h-3.5 text-teal-600" />
+                    Impact
+                  </Link>
+                  <Link
+                    href="/government/innovation-portfolio"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <Globe className="w-3.5 h-3.5 text-purple-600" />
+                    Portfolio
+                  </Link>
+                </>
+              )}
+              {currentUser?.role === "PROCUREMENT_OFFICER" && (
+                <>
+                  <Link
+                    href="/government/procurement"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                    Procurement
+                  </Link>
+                  <Link
+                    href="/government/contracts"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <Coins className="w-3.5 h-3.5 text-emerald-600" />
+                    Contracts
+                  </Link>
+                  <Link
+                    href="/government/payments"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <CreditCard className="w-3.5 h-3.5 text-purple-600" />
+                    Payments
+                  </Link>
+                  <Link
+                    href="/government/scale-up"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+                    Scale-Up
+                  </Link>
+                </>
+              )}
+              {currentUser?.role === "STARTUP" && (
+                <>
+                  <Link
+                    href="/startup/pilots"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <FlaskConical className="w-3.5 h-3.5 text-cyan-600" />
+                    My Pilots
+                  </Link>
+                  <Link
+                    href="/startup/contracts"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <Coins className="w-3.5 h-3.5 text-emerald-600" />
+                    Contracts
+                  </Link>
+                  <Link
+                    href="/startup/invoices"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <CreditCard className="w-3.5 h-3.5 text-purple-600" />
+                    Invoices
+                  </Link>
+                  <Link
+                    href="/startup/scale-up"
+                    className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+                    Scale-Up
+                  </Link>
+                </>
+              )}
+              {(currentUser?.role === "EXPERT" || currentUser?.role === "EXPERT_EVALUATOR") && (
+                <Link
+                  href="/expert/dashboard"
+                  className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                >
+                  <Award className="w-3.5 h-3.5 text-amber-500" />
+                  Expert Desk
+                  <Badge variant="gov" className="text-[9px] py-0 px-1">Active</Badge>
+                </Link>
+              )}
+              {(currentUser?.role === "VALIDATOR" || currentUser?.role === "INDEPENDENT_VALIDATOR") && (
+                <Link
+                  href="/validator/dashboard"
+                  className="hover:text-blue-900 text-blue-900 font-semibold transition-colors py-1 flex items-center gap-1"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-cyan-600" />
+                  Validator Portal
+                  <Badge variant="gov" className="text-[9px] py-0 px-1">Audits</Badge>
+                </Link>
+              )}
             </nav>
 
             {/* Actions: Logged-in Menu or Logged-out Buttons */}
@@ -194,6 +348,156 @@ export function Navbar() {
                           <LayoutDashboard className="w-3.5 h-3.5 text-slate-500" />
                           Dashboard
                         </Link>
+                        {(currentUser.role === "GOVERNMENT" || currentUser.role === "ADMIN") && (
+                          <>
+                            <Link
+                              href="/government/pilots"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <FlaskConical className="w-3.5 h-3.5 text-cyan-600" />
+                              Pilots Sandbox
+                            </Link>
+                            <Link
+                              href="/government/validation"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                              Validation Dashboard
+                            </Link>
+                            <Link
+                              href="/government/procurement"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                              Procurement Dossiers
+                            </Link>
+                            <Link
+                              href="/government/contracts"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <Coins className="w-3.5 h-3.5 text-emerald-600" />
+                              Contracts Portfolio
+                            </Link>
+                            <Link
+                              href="/government/payments"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <CreditCard className="w-3.5 h-3.5 text-purple-600" />
+                              Payments & Invoices
+                            </Link>
+                            <Link
+                              href="/government/scale-up"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+                              Scale-Up & Replication
+                            </Link>
+                            <Link
+                              href="/government/impact"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <BarChart3 className="w-3.5 h-3.5 text-teal-600" />
+                              Impact Intelligence
+                            </Link>
+                            <Link
+                              href="/government/innovation-portfolio"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <Globe className="w-3.5 h-3.5 text-purple-600" />
+                              Innovation Pipeline
+                            </Link>
+                          </>
+                        )}
+                        {currentUser.role === "PROCUREMENT_OFFICER" && (
+                          <>
+                            <Link
+                              href="/government/procurement"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                              Procurement Dossiers
+                            </Link>
+                            <Link
+                              href="/government/contracts"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <Coins className="w-3.5 h-3.5 text-emerald-600" />
+                              Contracts Portfolio
+                            </Link>
+                            <Link
+                              href="/government/payments"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <CreditCard className="w-3.5 h-3.5 text-purple-600" />
+                              Payments & Invoices
+                            </Link>
+                            <Link
+                              href="/government/scale-up"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+                              Scale-Up & Replication
+                            </Link>
+                          </>
+                        )}
+                        {(currentUser.role === "STARTUP" || currentUser.role === "ADMIN") && (
+                          <>
+                            <Link
+                              href="/startup/pilots"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <FlaskConical className="w-3.5 h-3.5 text-cyan-600" />
+                              My Sandbox Pilots
+                            </Link>
+                            <Link
+                              href="/startup/contracts"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <Coins className="w-3.5 h-3.5 text-emerald-600" />
+                              Awarded Contracts
+                            </Link>
+                            <Link
+                              href="/startup/invoices"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <CreditCard className="w-3.5 h-3.5 text-purple-600" />
+                              My Invoices
+                            </Link>
+                            <Link
+                              href="/startup/scale-up"
+                              onClick={() => setUserDropdownOpen(false)}
+                              className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                            >
+                              <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+                              Scale-Up Deployments
+                            </Link>
+                          </>
+                        )}
+                        {(currentUser.role === "VALIDATOR" || currentUser.role === "INDEPENDENT_VALIDATOR" || currentUser.role === "ADMIN") && (
+                          <Link
+                            href="/validator/dashboard"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-50 font-medium"
+                          >
+                            <ShieldCheck className="w-3.5 h-3.5 text-cyan-600" />
+                            Validator Portal
+                          </Link>
+                        )}
                         <Link
                           href="/profile"
                           onClick={() => setUserDropdownOpen(false)}
@@ -233,6 +537,16 @@ export function Navbar() {
                   >
                     <Rocket className="w-3.5 h-3.5 text-amber-600" />
                     Startup Portal
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openAuth("EXPERT")}
+                    className="gap-1.5 font-medium text-xs text-slate-700 border-slate-200 hover:bg-slate-50"
+                    id="btn-expert-portal"
+                  >
+                    <Award className="w-3.5 h-3.5 text-indigo-600" />
+                    Expert Portal
                   </Button>
                   <Link href="/login">
                     <Button
@@ -334,6 +648,30 @@ export function Navbar() {
                       Dashboard
                     </Button>
                   </Link>
+                  {(currentUser?.role === "GOVERNMENT" || currentUser?.role === "ADMIN") && (
+                    <Link
+                      href="/government/pilots"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full"
+                    >
+                      <Button variant="outline" size="md" className="w-full justify-center gap-2 text-xs text-blue-900 border-blue-200 bg-blue-50/50">
+                        <FlaskConical className="w-4 h-4 text-cyan-600" />
+                        Pilots Sandbox Portfolio
+                      </Button>
+                    </Link>
+                  )}
+                  {currentUser?.role === "STARTUP" && (
+                    <Link
+                      href="/startup/pilots"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full"
+                    >
+                      <Button variant="outline" size="md" className="w-full justify-center gap-2 text-xs text-blue-900 border-blue-200 bg-blue-50/50">
+                        <FlaskConical className="w-4 h-4 text-cyan-600" />
+                        My Sandbox Pilots
+                      </Button>
+                    </Link>
+                  )}
                   <Link
                     href="/profile"
                     onClick={() => setMobileMenuOpen(false)}
@@ -359,11 +697,11 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-1.5">
                     <Button
                       variant="outline"
                       size="md"
-                      className="justify-center gap-1.5 text-xs font-medium"
+                      className="justify-center gap-1 text-[11px] font-medium px-1"
                       onClick={() => {
                         setMobileMenuOpen(false);
                         openAuth("GOVERNMENT");
@@ -375,7 +713,7 @@ export function Navbar() {
                     <Button
                       variant="outline"
                       size="md"
-                      className="justify-center gap-1.5 text-xs font-medium"
+                      className="justify-center gap-1 text-[11px] font-medium px-1"
                       onClick={() => {
                         setMobileMenuOpen(false);
                         openAuth("STARTUP");
@@ -383,6 +721,18 @@ export function Navbar() {
                     >
                       <Rocket className="w-3.5 h-3.5 text-amber-600" />
                       Startup
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="md"
+                      className="justify-center gap-1 text-[11px] font-medium px-1"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        openAuth("EXPERT");
+                      }}
+                    >
+                      <Award className="w-3.5 h-3.5 text-indigo-600" />
+                      Expert
                     </Button>
                   </div>
                   <div className="grid grid-cols-2 gap-2 mt-1">

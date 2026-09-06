@@ -6,7 +6,8 @@ from typing import Tuple, Dict, Any, Optional
 from fastapi import UploadFile, HTTPException, status
 
 ALLOWED_EXTENSIONS = {
-    ".pdf", ".docx", ".doc", ".xlsx", ".xls", ".png", ".jpg", ".jpeg"
+    ".pdf", ".docx", ".doc", ".xlsx", ".xls", ".png", ".jpg", ".jpeg",
+    ".csv", ".json", ".txt", ".zip"
 }
 
 ALLOWED_MIME_TYPES = {
@@ -18,6 +19,11 @@ ALLOWED_MIME_TYPES = {
     "image/png",
     "image/jpeg",
     "image/pjpeg",
+    "text/csv",
+    "application/json",
+    "text/plain",
+    "application/zip",
+    "application/x-zip-compressed",
 }
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB

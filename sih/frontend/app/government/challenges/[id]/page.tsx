@@ -18,6 +18,7 @@ import {
   FileText,
   Target,
   BarChart3,
+  Award,
   ShieldCheck,
   ShieldAlert,
   Rocket,
@@ -196,7 +197,18 @@ export default function GovernmentChallengeDetailPage() {
               <ArrowLeft className="w-3.5 h-3.5" /> Back to Challenges Portfolio
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Link href={`/government/challenges/${challengeId}/evaluations`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-xs font-semibold text-blue-900 border-blue-200 bg-blue-50/70 hover:bg-blue-100 shadow-xs"
+                >
+                  <Award className="w-3.5 h-3.5 text-blue-900" />
+                  Evaluations & Rankings
+                </Button>
+              </Link>
+
               {challenge.status === "DRAFT" && (
                 <>
                   <Button
@@ -477,6 +489,26 @@ export default function GovernmentChallengeDetailPage() {
                 <p className="text-xs text-slate-600 leading-relaxed">
                   {challenge.eligibility_requirements || "DPIIT-recognized startups with demonstrable technology prototype."}
                 </p>
+              </div>
+
+              {/* Step 5: Expert Evaluation Hub Card */}
+              <div className="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-2xl border border-blue-200/80 p-6 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-blue-950 uppercase tracking-wider flex items-center gap-1.5">
+                    <Award className="w-3.5 h-3.5 text-amber-500" />
+                    Expert Evaluation Hub
+                  </h3>
+                  <Badge variant="gov" className="text-[10px]">Step 5</Badge>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Manage weighted scoring criteria (100% total weight validation), assign empanelled experts, track Conflict of Interest declarations, and view ranked leaderboards.
+                </p>
+                <Link href={`/government/challenges/${challengeId}/evaluations`} className="block">
+                  <Button variant="gov" size="sm" className="w-full text-xs font-semibold gap-1.5 shadow-xs">
+                    <BarChart3 className="w-3.5 h-3.5 text-amber-400" />
+                    Open Evaluation & Rankings Hub
+                  </Button>
+                </Link>
               </div>
 
               {/* Administrative Info Card */}

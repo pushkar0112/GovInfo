@@ -197,13 +197,61 @@ export default function PilotDetailPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        {/* Back navigation */}
-        <Link
-          href={userRole === "STARTUP" ? "/portal/startup" : "/portal/government"}
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Dashboard
-        </Link>
+        {/* Navigation Bar */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <Link
+            href={userRole === "STARTUP" ? "/portal/startup" : "/portal/government"}
+            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Dashboard
+          </Link>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {userRole === "STARTUP" ? (
+              <>
+                <Link href={`/startup/pilots/${pilotId}/kpis`}>
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5 border-blue-200 text-blue-900 bg-blue-50/50">
+                    <TrendingUp className="w-3.5 h-3.5 text-blue-800" />
+                    KPI Telemetry
+                  </Button>
+                </Link>
+                <Link href={`/startup/pilots/${pilotId}/validation`}>
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5 border-emerald-300 text-emerald-900 bg-emerald-50/50">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Validation Status
+                  </Button>
+                </Link>
+                <Link href={`/startup/pilots/${pilotId}`}>
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5 border-slate-200 text-slate-700">
+                    <Rocket className="w-3.5 h-3.5 text-amber-500" />
+                    Workspace
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href={`/government/pilots/${pilotId}/kpis`}>
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5 border-blue-200 text-blue-900 bg-blue-50/50">
+                    <TrendingUp className="w-3.5 h-3.5 text-blue-800" />
+                    KPI Framework
+                  </Button>
+                </Link>
+                <Link href={`/government/pilots/${pilotId}/validation`}>
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5 border-emerald-300 text-emerald-900 bg-emerald-50/50">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Independent Validation
+                  </Button>
+                </Link>
+                <Link href={`/government/pilots/${pilotId}`}>
+                  <Button variant="outline" size="sm" className="text-xs gap-1.5 border-slate-200 text-slate-700">
+                    <Building2 className="w-3.5 h-3.5 text-blue-900" />
+                    Dossier
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
 
         {/* Action feedback notification */}
         {actionMessage && (
@@ -229,8 +277,25 @@ export default function PilotDetailPage() {
                 <FlaskConical className="w-3.5 h-3.5 mr-1 text-cyan-600" />
                 Live Operational Sandbox
               </Badge>
-              <Badge variant="secondary">12-Week Capped Sandbox</Badge>
-              <Badge variant="success">Active Pilot Deployment</Badge>
+              <Badge variant="secondary">Step 7: KPI & Validation</Badge>
+              {pilot?.validation_status && (
+                <Badge variant="gov" className="bg-blue-100 text-blue-900 border-blue-200">
+                  {pilot.validation_status.replace(/_/g, " ")}
+                </Badge>
+              )}
+              {pilot?.success_status && pilot.success_status !== "NOT_ASSESSED" && (
+                <Badge
+                  variant={
+                    pilot.success_status === "SUCCESSFUL"
+                      ? "success"
+                      : pilot.success_status === "PARTIALLY_SUCCESSFUL"
+                      ? "warning"
+                      : "destructive"
+                  }
+                >
+                  {pilot.success_status.replace(/_/g, " ")}
+                </Badge>
+              )}
             </div>
             <div className="text-xs text-slate-500 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
