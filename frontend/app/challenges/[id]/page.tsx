@@ -246,7 +246,7 @@ export default function ChallengeDetailPage() {
                         value={proposalSummary}
                         onChange={(e) => setProposalSummary(e.target.value)}
                         placeholder="Briefly describe how your technology solves the specific problem statement..."
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#0B2545] focus:outline-none"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:text-slate-900 focus:bg-white focus:ring-2 focus:ring-[#0B2545] focus:border-[#0B2545] focus:outline-none transition-colors"
                       />
                     </div>
 
@@ -260,7 +260,7 @@ export default function ChallengeDetailPage() {
                         value={technicalApproach}
                         onChange={(e) => setTechnicalApproach(e.target.value)}
                         placeholder="Describe system architecture, deployment requirements, and edge/offline handling..."
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#0B2545] focus:outline-none"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:text-slate-900 focus:bg-white focus:ring-2 focus:ring-[#0B2545] focus:border-[#0B2545] focus:outline-none transition-colors"
                       />
                     </div>
 
@@ -271,12 +271,12 @@ export default function ChallengeDetailPage() {
                       <select
                         value={trl}
                         onChange={(e) => setTrl(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#0B2545] focus:outline-none bg-white"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-900 bg-white focus:text-slate-900 focus:bg-white focus:ring-2 focus:ring-[#0B2545] focus:border-[#0B2545] focus:outline-none transition-colors cursor-pointer"
                       >
-                        <option value="TRL 6">TRL 6 - Prototype validated in relevant environment</option>
-                        <option value="TRL 7">TRL 7 - Demonstration in operational environment</option>
-                        <option value="TRL 8">TRL 8 - System completed and qualified</option>
-                        <option value="TRL 9">TRL 9 - Actual system proven in operational environment</option>
+                        <option value="TRL 6" className="text-slate-900 bg-white">TRL 6 - Prototype validated in relevant environment</option>
+                        <option value="TRL 7" className="text-slate-900 bg-white">TRL 7 - Demonstration in operational environment</option>
+                        <option value="TRL 8" className="text-slate-900 bg-white">TRL 8 - System completed and qualified</option>
+                        <option value="TRL 9" className="text-slate-900 bg-white">TRL 9 - Actual system proven in operational environment</option>
                       </select>
                     </div>
 
@@ -289,7 +289,7 @@ export default function ChallengeDetailPage() {
                         value={pitchDeckUrl}
                         onChange={(e) => setPitchDeckUrl(e.target.value)}
                         placeholder="https://drive.google.com/... or https://..."
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-[#0B2545] focus:outline-none"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:text-slate-900 focus:bg-white focus:ring-2 focus:ring-[#0B2545] focus:border-[#0B2545] focus:outline-none transition-colors"
                       />
                     </div>
 

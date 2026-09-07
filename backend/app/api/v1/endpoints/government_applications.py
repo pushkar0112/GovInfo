@@ -11,7 +11,9 @@ from app.schemas.application import (
     ApplicationListResponse,
     ApplicationStatusUpdateRequest,
 )
+from app.schemas.ai_assessment import AIAssessmentResponse
 from app.services.application_service import ApplicationService
+from app.services.ai_shortlisting_service import AIShortlistingService
 
 router = APIRouter()
 
@@ -58,6 +60,37 @@ def get_department_application_detail(
     return ApplicationService.get_application_detail(db, current_user, application_id)
 
 
+@router.get(
+    "/{application_id}/ai-assessment",
+    response_model=AIAssessmentResponse,
+    summary="Get explainable AI shortlisting assessment",
+    description="Calculates or retrieves the 6-factor AI Match Score, recommendation, positive reasons, and potential concerns.",
+)
+def get_application_ai_assessment(
+    application_id: str,
+    current_user: User = Depends(require_role(UserRole.GOVERNMENT, UserRole.ADMIN)),
+    db: Session = Depends(get_db),
+) -> AIAssessmentResponse:
+    # Validate permission to access application
+    ApplicationService.get_application_detail(db, current_user, application_id)
+    return AIShortlistingService.get_or_create_assessment(db, application_id, force_reanalyze=False)
+
+
+@router.post(
+    "/{application_id}/ai-assessment",
+    response_model=AIAssessmentResponse,
+    summary="Trigger/re-evaluate AI shortlisting assessment",
+    description="Re-analyzes proposal against challenge requirements and returns an updated AI Match Score.",
+)
+def reanalyze_application_ai_assessment(
+    application_id: str,
+    current_user: User = Depends(require_role(UserRole.GOVERNMENT, UserRole.ADMIN)),
+    db: Session = Depends(get_db),
+) -> AIAssessmentResponse:
+    ApplicationService.get_application_detail(db, current_user, application_id)
+    return AIShortlistingService.get_or_create_assessment(db, application_id, force_reanalyze=True)
+
+
 @router.patch(
     "/{application_id}/status",
     response_model=ApplicationResponse,
@@ -76,3 +109,4 @@ def update_application_status(
     db: Session = Depends(get_db),
 ) -> ApplicationResponse:
     return ApplicationService.update_application_status(db, current_user, application_id, payload)
+

@@ -339,7 +339,7 @@ export function PilotCreationWizardModal({
                   type="text"
                   value={pilotTitle}
                   onChange={(e) => setPilotTitle(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   placeholder="e.g. PHC Rural Tele-Triage Field Sandbox Trial"
                 />
               </div>
@@ -352,7 +352,7 @@ export function PilotCreationWizardModal({
                   rows={2}
                   value={objective}
                   onChange={(e) => setObjective(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   placeholder="State the core experimental goal of this operational deployment..."
                 />
               </div>
@@ -365,7 +365,7 @@ export function PilotCreationWizardModal({
                   rows={3}
                   value={scope}
                   onChange={(e) => setScope(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   placeholder="Define technical sandbox parameters, inclusion/exclusion criteria, and operational environments..."
                 />
               </div>
@@ -388,7 +388,7 @@ export function PilotCreationWizardModal({
                   type="text"
                   value={pilotLocation}
                   onChange={(e) => setPilotLocation(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   placeholder="e.g. Alwar District Sub-Divisional Health Centres, Rajasthan"
                 />
               </div>
@@ -401,7 +401,7 @@ export function PilotCreationWizardModal({
                   type="text"
                   value={operatingRegions}
                   onChange={(e) => setOperatingRegions(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   placeholder="e.g. Northern Health Zone (Rajasthan, Haryana)"
                 />
               </div>
@@ -414,7 +414,7 @@ export function PilotCreationWizardModal({
                   rows={3}
                   value={expectedOutcomes}
                   onChange={(e) => setExpectedOutcomes(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   placeholder="Describe empirical success criteria to be audited during and after deployment..."
                 />
               </div>
@@ -433,7 +433,7 @@ export function PilotCreationWizardModal({
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   />
                 </div>
 
@@ -445,7 +445,7 @@ export function PilotCreationWizardModal({
                     type="date"
                     value={plannedEndDate}
                     onChange={(e) => setPlannedEndDate(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   />
                 </div>
 
@@ -459,7 +459,7 @@ export function PilotCreationWizardModal({
                     max={730}
                     value={durationDays}
                     onChange={(e) => setDurationDays(parseInt(e.target.value) || 90)}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   />
                 </div>
               </div>
@@ -490,7 +490,7 @@ export function PilotCreationWizardModal({
                     step={10000}
                     value={pilotBudget}
                     onChange={(e) => setPilotBudget(parseFloat(e.target.value) || 0)}
-                    className="w-full pl-8 pr-3 py-2 text-xs font-bold text-slate-900 border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                    className="w-full pl-8 pr-3 py-2 text-xs font-bold text-slate-900 bg-white border border-slate-300 caret-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   />
                 </div>
                 <span className="text-[11px] text-slate-500 mt-1 block">
@@ -585,7 +585,7 @@ export function PilotCreationWizardModal({
                           value={m.title}
                           onChange={(e) => handleUpdateMilestone(idx, "title", e.target.value)}
                           placeholder="Milestone title..."
-                          className="font-semibold text-slate-900 bg-white px-2 py-1 border border-slate-200 rounded focus:ring-1 focus:ring-[#0B2545] text-xs w-64 sm:w-80"
+                          className="font-semibold text-slate-900 bg-white px-2 py-1 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545] caret-slate-900 placeholder:text-slate-400 text-xs w-64 sm:w-80"
                         />
                       </div>
 
@@ -612,7 +612,7 @@ export function PilotCreationWizardModal({
                           step={1}
                           value={m.weight}
                           onChange={(e) => handleUpdateMilestone(idx, "weight", parseFloat(e.target.value) || 0)}
-                          className="w-full px-2 py-1 text-xs border border-slate-200 rounded bg-white"
+                          className="w-full px-2 py-1 text-xs border border-slate-300 rounded bg-white text-slate-900 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                         />
                       </div>
 
@@ -626,7 +626,7 @@ export function PilotCreationWizardModal({
                           step={5000}
                           value={m.tranche_amount}
                           onChange={(e) => handleUpdateMilestone(idx, "tranche_amount", parseFloat(e.target.value) || 0)}
-                          className="w-full px-2 py-1 text-xs border border-slate-200 rounded bg-white"
+                          className="w-full px-2 py-1 text-xs border border-slate-300 rounded bg-white text-slate-900 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                         />
                       </div>
 
@@ -638,7 +638,7 @@ export function PilotCreationWizardModal({
                           type="date"
                           value={m.planned_end_date}
                           onChange={(e) => handleUpdateMilestone(idx, "planned_end_date", e.target.value)}
-                          className="w-full px-2 py-1 text-xs border border-slate-200 rounded bg-white"
+                          className="w-full px-2 py-1 text-xs border border-slate-300 rounded bg-white text-slate-900 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                         />
                       </div>
                     </div>
@@ -649,7 +649,7 @@ export function PilotCreationWizardModal({
                         value={m.objective}
                         onChange={(e) => handleUpdateMilestone(idx, "objective", e.target.value)}
                         placeholder="Deliverable description or acceptance criteria..."
-                        className="w-full px-2 py-1 text-[11px] text-slate-600 border border-slate-200 rounded bg-white"
+                        className="w-full px-2 py-1 text-[11px] text-slate-900 border border-slate-300 rounded bg-white caret-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       />
                     </div>
                   </div>

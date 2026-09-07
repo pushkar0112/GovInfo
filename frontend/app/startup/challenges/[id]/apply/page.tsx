@@ -457,7 +457,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.proposal_title}
                       onChange={(e) => setFormData({ ...formData, proposal_title: e.target.value })}
                       placeholder="e.g. HydroAcoustic IoT Telemetry for Municipal Pipeline Burst Detection"
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <p className="text-[10px] text-slate-400 mt-1">Minimum 5 characters. Must clearly denote your technology.</p>
                   </div>
@@ -472,7 +472,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.executive_summary}
                       onChange={(e) => setFormData({ ...formData, executive_summary: e.target.value })}
                       placeholder="Provide a concise 3-paragraph summary: (1) Core technology, (2) Problem tackled, (3) Measurable outcome delivered to the sponsoring department..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <div className="flex justify-between text-[10px] text-slate-400 mt-1">
                       <span>Minimum 20 characters required.</span>
@@ -495,7 +495,7 @@ export default function StartupChallengeApplyPage() {
 
                 <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
                   <span className="font-bold text-slate-800">Sponsoring Department&apos;s Challenge Statement:</span>
-                  <p className="text-slate-600 line-clamp-3">{challenge?.problem_statement}</p>
+                  <p className="text-slate-800 line-clamp-3">{challenge?.problem_statement}</p>
                 </div>
 
                 <div className="space-y-4 text-xs">
@@ -509,7 +509,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.problem_understanding}
                       onChange={(e) => setFormData({ ...formData, problem_understanding: e.target.value })}
                       placeholder="Explain why current legacy municipal solutions fail, what root causes your team identified, and how your technological approach is tailored to Indian public sector constraints..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <div className="flex justify-between text-[10px] text-slate-400 mt-1">
                       <span>Minimum 20 characters required.</span>
@@ -541,7 +541,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.proposed_solution}
                       onChange={(e) => setFormData({ ...formData, proposed_solution: e.target.value })}
                       placeholder="Describe high-level architecture: Edge hardware, IoT telemetry stack, backend pipelines, cloud hosting, and dashboard integration..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -555,7 +555,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.technical_approach}
                       onChange={(e) => setFormData({ ...formData, technical_approach: e.target.value })}
                       placeholder="Describe proprietary algorithms, AI models, hardware IP, sensor calibration, or patented approaches that provide competitive accuracy and reliability..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
                 </div>
@@ -575,7 +575,7 @@ export default function StartupChallengeApplyPage() {
                 {challenge?.kpis && challenge.kpis.length > 0 && (
                   <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
                     <span className="font-bold text-slate-800">Target Indicators Mandated by Department:</span>
-                    <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                    <ul className="list-disc pl-4 space-y-1 text-slate-800">
                       {challenge.kpis.map((k) => (
                         <li key={k.id}>
                           <strong>{k.name}:</strong> Target {k.target_value} {k.measurement_unit}
@@ -596,7 +596,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.expected_outcomes}
                       onChange={(e) => setFormData({ ...formData, expected_outcomes: e.target.value })}
                       placeholder="Outline specific percentage improvements, reduction in turnaround times, cost savings, or public service enhancements your pilot guarantees to achieve..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
                 </div>
@@ -624,7 +624,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.implementation_plan}
                       onChange={(e) => setFormData({ ...formData, implementation_plan: e.target.value })}
                       placeholder="Milestone 1 (Days 1-30): Site survey & hardware install. Milestone 2 (Days 31-60): Integration & baseline telemetry. Milestone 3 (Days 61-90): Live audit & report..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -638,7 +638,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.pilot_plan}
                       onChange={(e) => setFormData({ ...formData, pilot_plan: e.target.value })}
                       placeholder="Specify test locations (wards/junctions), sample size, sensor quantities, civic officer coordination, and backup protocols during trial..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
                 </div>
@@ -651,7 +651,7 @@ export default function StartupChallengeApplyPage() {
                     max={180}
                     value={formData.timeline_days}
                     onChange={(e) => setFormData({ ...formData, timeline_days: parseInt(e.target.value) || 90 })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   />
                   <span className="text-[10px] text-slate-400 mt-0.5 block">Default standard sandbox window is 90 days.</span>
                 </div>
@@ -676,7 +676,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.team_capabilities}
                       onChange={(e) => setFormData({ ...formData, team_capabilities: e.target.value })}
                       placeholder="Highlight principal investigators, lead hardware/software engineers, domain advisors, and academic collaborations..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -687,7 +687,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.previous_deployments}
                       onChange={(e) => setFormData({ ...formData, previous_deployments: e.target.value })}
                       placeholder="Detail previous pilots, commercial customer testimonials, or smart city deployments conducted by your team..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
                 </div>
@@ -724,7 +724,7 @@ export default function StartupChallengeApplyPage() {
                       required
                       value={formData.requested_budget}
                       onChange={(e) => setFormData({ ...formData, requested_budget: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545] font-bold text-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl font-bold text-[#0B2545] bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <span className="text-[10px] text-slate-400 mt-1 block">
                       ₹{(formData.requested_budget / 100000).toFixed(2)} Lakhs
@@ -739,7 +739,7 @@ export default function StartupChallengeApplyPage() {
                       step={10000}
                       value={formData.estimated_cost}
                       onChange={(e) => setFormData({ ...formData, estimated_cost: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <span className="text-[10px] text-slate-400 mt-1 block">
                       Estimated unit cost at city-wide or district scale.
@@ -769,7 +769,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.data_requirements}
                       onChange={(e) => setFormData({ ...formData, data_requirements: e.target.value })}
                       placeholder="What GIS layers, municipal sensor feeds, or API access points will your team require from the sponsoring department?"
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -782,7 +782,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.security_approach}
                       onChange={(e) => setFormData({ ...formData, security_approach: e.target.value })}
                       placeholder="Specify India cloud hosting (e.g. MeitY empaneled cloud), encryption at rest/in-transit, penetration testing compliance..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -795,7 +795,7 @@ export default function StartupChallengeApplyPage() {
                       value={formData.ip_approach}
                       onChange={(e) => setFormData({ ...formData, ip_approach: e.target.value })}
                       placeholder="Confirm patent ownership, proprietary algorithms, and confirm non-exclusive pilot licensing terms..."
-                      className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
                 </div>

@@ -112,6 +112,34 @@ interface EvaluationSummary {
   }[];
 }
 
+interface AIFactorScore {
+  factor_key: string;
+  label: string;
+  score: number | null;
+  max_score: number;
+  weight_percentage: number;
+  description?: string | null;
+}
+
+interface AIAssessmentData {
+  id: string;
+  application_id: string;
+  challenge_id: string;
+  status: "PENDING" | "ANALYZING" | "COMPLETED" | "INSUFFICIENT_DATA" | "ERROR";
+  overall_score: number | null;
+  score_label: string;
+  recommendation: "STRONG_MATCH" | "MODERATE_MATCH" | "LOW_MATCH" | "INSUFFICIENT_DATA" | null;
+  recommendation_label: string | null;
+  factors: AIFactorScore[];
+  positive_reasons: string[];
+  risk_flags: string[];
+  summary?: string | null;
+  model_version: string;
+  execution_mode: string;
+  mode_label: string;
+  analyzed_at?: string | null;
+}
+
 export default function GovernmentApplicationReviewPage() {
   const params = useParams();
   const router = useRouter();
@@ -120,7 +148,10 @@ export default function GovernmentApplicationReviewPage() {
 
   const [application, setApplication] = useState<GovApplicationDetail | null>(null);
   const [evaluationsSummary, setEvaluationsSummary] = useState<EvaluationSummary | null>(null);
+  const [aiAssessment, setAiAssessment] = useState<AIAssessmentData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingAi, setLoadingAi] = useState(false);
+  const [reanalyzingAi, setReanalyzingAi] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Status Decision Modal State
@@ -129,6 +160,35 @@ export default function GovernmentApplicationReviewPage() {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [statusSuccess, setStatusSuccess] = useState<string | null>(null);
   const [pilotWizardOpen, setPilotWizardOpen] = useState(false);
+
+  const fetchAiAssessment = async () => {
+    setLoadingAi(true);
+    try {
+      const aiData = await apiRequest<AIAssessmentData>(
+        `/api/v1/government/applications/${applicationId}/ai-assessment`
+      );
+      setAiAssessment(aiData);
+    } catch {
+      // Non-blocking if AI assessment not yet generated
+    } finally {
+      setLoadingAi(false);
+    }
+  };
+
+  const handleReanalyzeAi = async () => {
+    setReanalyzingAi(true);
+    try {
+      const aiData = await apiRequest<AIAssessmentData>(
+        `/api/v1/government/applications/${applicationId}/ai-assessment`,
+        { method: "POST" }
+      );
+      setAiAssessment(aiData);
+    } catch (err: any) {
+      console.error("Failed to re-calculate AI score:", err);
+    } finally {
+      setReanalyzingAi(false);
+    }
+  };
 
   const fetchApplication = async () => {
     setLoading(true);
@@ -147,6 +207,9 @@ export default function GovernmentApplicationReviewPage() {
       } catch {
         // Non-blocking if not yet evaluated or assigned
       }
+
+      // Fetch explainable AI assessment
+      await fetchAiAssessment();
     } catch (err: any) {
       setError(err.message || "Failed to load application details.");
     } finally {
@@ -353,7 +416,7 @@ export default function GovernmentApplicationReviewPage() {
                   {application.proposed_solution && (
                     <div>
                       <span className="font-bold text-slate-800 block mb-1">Architecture Specification:</span>
-                      <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
+                      <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
                         {application.proposed_solution}
                       </p>
                     </div>
@@ -362,7 +425,7 @@ export default function GovernmentApplicationReviewPage() {
                   {application.technical_approach && (
                     <div>
                       <span className="font-bold text-slate-800 block mb-1">Deep-Tech & Algorithmic Innovation:</span>
-                      <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
+                      <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
                         {application.technical_approach}
                       </p>
                     </div>
@@ -380,7 +443,7 @@ export default function GovernmentApplicationReviewPage() {
                   {application.expected_outcomes && (
                     <div>
                       <span className="font-bold text-slate-800 block mb-1">Expected Measurable Outcomes:</span>
-                      <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
+                      <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
                         {application.expected_outcomes}
                       </p>
                     </div>
@@ -389,7 +452,7 @@ export default function GovernmentApplicationReviewPage() {
                   {application.pilot_plan && (
                     <div>
                       <span className="font-bold text-slate-800 block mb-1">Field Sandbox Plan:</span>
-                      <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
+                      <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
                         {application.pilot_plan}
                       </p>
                     </div>
@@ -408,7 +471,7 @@ export default function GovernmentApplicationReviewPage() {
                     {application.team_capabilities && (
                       <div>
                         <span className="font-bold text-slate-800 block mb-1">Engineering & Operations Team:</span>
-                        <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
+                        <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
                           {application.team_capabilities}
                         </p>
                       </div>
@@ -417,8 +480,46 @@ export default function GovernmentApplicationReviewPage() {
                     {application.previous_deployments && (
                       <div>
                         <span className="font-bold text-slate-800 block mb-1">Prior Municipal / Enterprise Deployments:</span>
-                        <p className="text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100 whitespace-pre-line">
+                        <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
                           {application.previous_deployments}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Governance, Security & IP Protocol */}
+              {(application.data_requirements || application.security_approach || application.ip_approach) && (
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+                  <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                    Governance, Security & IP Alignment
+                  </h2>
+
+                  <div className="space-y-3 text-xs">
+                    {application.data_requirements && (
+                      <div>
+                        <span className="font-bold text-slate-800 block mb-1">Data Governance & Bilateral Protocols:</span>
+                        <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
+                          {application.data_requirements}
+                        </p>
+                      </div>
+                    )}
+
+                    {application.security_approach && (
+                      <div>
+                        <span className="font-bold text-slate-800 block mb-1">Cybersecurity & Cloud Empanelment Standards:</span>
+                        <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
+                          {application.security_approach}
+                        </p>
+                      </div>
+                    )}
+
+                    {application.ip_approach && (
+                      <div>
+                        <span className="font-bold text-slate-800 block mb-1">Intellectual Property (IP) Alignment:</span>
+                        <p className="text-slate-800 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-line">
+                          {application.ip_approach}
                         </p>
                       </div>
                     )}
@@ -447,7 +548,7 @@ export default function GovernmentApplicationReviewPage() {
                             <FileText className="w-4 h-4 text-blue-900 shrink-0" />
                             <div>
                               <div className="font-semibold text-slate-900">{doc.original_filename}</div>
-                              <span className="text-[10px] text-slate-400">
+                              <span className="text-[10px] text-slate-500">
                                 {doc.document_type} • {(doc.file_size_bytes / 1024).toFixed(0)} KB
                               </span>
                             </div>
@@ -468,7 +569,283 @@ export default function GovernmentApplicationReviewPage() {
                 </div>
               )}
 
-              {/* Step 5: Expert Evaluation & Transparent Scoring Dossier */}
+              {/* STAGE 1: Pre-Screening Snapshot */}
+              {application.eligibility_snapshot && (
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-3 text-xs">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-blue-900" />
+                      <h2 className="font-bold text-slate-900 uppercase tracking-wider text-xs">
+                        Pre-Screening Snapshot
+                      </h2>
+                    </div>
+                    <Badge
+                      variant={application.eligibility_snapshot.is_eligible ? "success" : "destructive"}
+                      className="text-[10px]"
+                    >
+                      {application.eligibility_snapshot.overall_status || "SCREENED"}
+                    </Badge>
+                  </div>
+
+                  <p className="text-slate-800 text-xs leading-relaxed">
+                    {application.eligibility_snapshot.summary}
+                  </p>
+
+                  {application.eligibility_snapshot.mandatory_criteria && (
+                    <div className="space-y-1.5 pt-2 border-t border-slate-100">
+                      {application.eligibility_snapshot.mandatory_criteria.map((c: any, i: number) => (
+                        <div key={i} className="flex items-center justify-between py-1.5 border-b border-slate-50">
+                          <span className="text-slate-800 text-xs">{c.criterion}</span>
+                          <span className={c.passed ? "text-emerald-700 font-bold" : "text-rose-600 font-bold"}>
+                            {c.passed ? "✓ Passed" : "✗ Action Req"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* STAGE 2: AI-Assisted Shortlisting */}
+              <div className="bg-white rounded-2xl border border-blue-200/90 p-6 sm:p-8 shadow-xs space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center text-blue-900 shrink-0">
+                      <Sparkles className="w-4 h-4 text-blue-700" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                          AI-Assisted Shortlisting
+                        </h2>
+                        <Badge variant="outline" className="text-[10px] font-semibold text-blue-700 border-blue-200 bg-blue-50/70">
+                          {aiAssessment?.mode_label || "AI-Assisted Assessment — Demo/Rule-Based Mode"}
+                        </Badge>
+                      </div>
+                      <span className="text-[11px] text-slate-500">
+                        Multi-factor quantitative match and risk evaluation for intake prioritization
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={reanalyzingAi}
+                    onClick={handleReanalyzeAi}
+                    className="text-xs gap-1.5 border-slate-300 text-slate-700 hover:bg-slate-50"
+                  >
+                    {reanalyzingAi ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-700" />
+                    ) : (
+                      <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    )}
+                    {reanalyzingAi ? "Analyzing..." : "Re-Calculate AI Score"}
+                  </Button>
+                </div>
+
+                {/* Assistive Disclaimer */}
+                <div className="p-3 bg-blue-50/70 border border-blue-200/70 rounded-xl text-xs text-blue-950 flex items-start gap-2.5">
+                  <Info className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">
+                    <strong>Assistive Recommendation Only:</strong> AI shortlisting is an assistive recommendation layer designed to prioritize and triage high-volume submissions. It does not replace human expert evaluation, cannot automatically select a startup for procurement, and does not make final government decisions.
+                  </p>
+                </div>
+
+                {/* AI Assessment Content */}
+                {loadingAi ? (
+                  <div className="py-8 flex flex-col items-center justify-center space-y-2 text-slate-500 text-xs">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-900" />
+                    <span>Analyzing application data against challenge criteria...</span>
+                  </div>
+                ) : aiAssessment?.status === "INSUFFICIENT_DATA" ? (
+                  <div className="p-6 bg-amber-50/60 border border-amber-200 rounded-xl text-center space-y-3">
+                    <AlertTriangle className="w-8 h-8 text-amber-600 mx-auto" />
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-bold text-amber-950">
+                        AI assessment unavailable — additional application information is required.
+                      </h3>
+                      <p className="text-xs text-amber-800 max-w-lg mx-auto leading-relaxed">
+                        {aiAssessment?.summary ||
+                          "Core proposal content (executive summary, architecture, or TRL details) does not meet the minimum completeness threshold needed for reliable scoring."}
+                      </p>
+                    </div>
+                    {aiAssessment.risk_flags && aiAssessment.risk_flags.length > 0 && (
+                      <div className="text-left max-w-md mx-auto pt-2">
+                        <span className="text-[11px] font-bold text-amber-900 block mb-1">
+                          Missing Information:
+                        </span>
+                        <ul className="list-disc list-inside text-xs text-amber-800 space-y-1">
+                          {aiAssessment.risk_flags.map((flag, idx) => (
+                            <li key={idx}>{flag}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                ) : aiAssessment && aiAssessment.overall_score !== null ? (
+                  <div className="space-y-6">
+                    {/* Score Card Hero */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-gradient-to-br from-blue-950 via-[#0B2545] to-slate-900 rounded-2xl text-white shadow-sm">
+                      <div className="space-y-1">
+                        <span className="text-xs uppercase font-bold tracking-wider text-blue-200">
+                          {aiAssessment.score_label || "AI-Assisted Match Score"}
+                        </span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl font-black text-white tracking-tight">
+                            {aiAssessment.overall_score.toFixed(1)}
+                          </span>
+                          <span className="text-blue-300 text-sm font-semibold">/ 100</span>
+                        </div>
+                        <p className="text-xs text-blue-100/80 leading-relaxed max-w-md pt-1">
+                          {aiAssessment.summary ||
+                            "Weighted multi-factor score evaluating problem fit, TRL, KPI alignment, and feasibility."}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col sm:items-end gap-2">
+                        <Badge
+                          className={`text-xs px-3 py-1 font-bold ${
+                            aiAssessment.recommendation === "STRONG_MATCH"
+                              ? "bg-emerald-500 text-slate-950 hover:bg-emerald-400"
+                              : aiAssessment.recommendation === "MODERATE_MATCH"
+                              ? "bg-blue-400 text-slate-950 hover:bg-blue-300"
+                              : "bg-amber-400 text-slate-950 hover:bg-amber-300"
+                          }`}
+                        >
+                          {aiAssessment.recommendation_label ||
+                            aiAssessment.recommendation?.replace(/_/g, " ") ||
+                            "Recommended"}
+                        </Badge>
+                        <span className="text-[10px] text-blue-300">
+                          Intake Triaging Recommendation
+                        </span>
+                        {aiAssessment.analyzed_at && (
+                          <span className="text-[10px] text-blue-300/80">
+                            Analyzed: {new Date(aiAssessment.analyzed_at).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 6-Factor Breakdown */}
+                    {aiAssessment.factors && aiAssessment.factors.length > 0 && (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                            6-Factor Weighted Evaluation Rubric
+                          </h3>
+                          <span className="text-[11px] text-slate-400">Total 100% Weight</span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {aiAssessment.factors.map((f) => {
+                            const pct = f.score !== null ? (f.score / f.max_score) * 100 : 0;
+                            return (
+                              <div
+                                key={f.factor_key}
+                                className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2"
+                              >
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="font-bold text-slate-800">{f.label}</span>
+                                  <span className="font-extrabold text-blue-950">
+                                    {f.score !== null ? f.score.toFixed(1) : "—"} / {f.max_score.toFixed(0)}{" "}
+                                    <span className="text-[10px] text-slate-500 font-normal">
+                                      ({f.weight_percentage}% wt)
+                                    </span>
+                                  </span>
+                                </div>
+                                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full transition-all ${
+                                      pct >= 75
+                                        ? "bg-emerald-600"
+                                        : pct >= 50
+                                        ? "bg-blue-600"
+                                        : "bg-amber-500"
+                                    }`}
+                                    style={{ width: `${Math.min(100, pct)}%` }}
+                                  />
+                                </div>
+                                {f.description && (
+                                  <p className="text-[11px] text-slate-500 leading-snug">{f.description}</p>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Explainability: Why Scored Highly & Potential Concerns */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                      {/* Positive Reasons */}
+                      <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                          <h4 className="text-xs font-bold text-emerald-950 uppercase tracking-wider">
+                            Why this application scored highly
+                          </h4>
+                        </div>
+                        {aiAssessment.positive_reasons && aiAssessment.positive_reasons.length > 0 ? (
+                          <ul className="space-y-1.5 pl-1 text-xs text-emerald-900">
+                            {aiAssessment.positive_reasons.map((reason, i) => (
+                              <li key={i} className="flex items-start gap-2 leading-relaxed">
+                                <span className="text-emerald-600 font-bold">•</span>
+                                <span>{reason}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-xs text-slate-500 italic">No specific standout strengths highlighted.</p>
+                        )}
+                      </div>
+
+                      {/* Potential Concerns */}
+                      <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" />
+                          <h4 className="text-xs font-bold text-amber-950 uppercase tracking-wider">
+                            Potential Concerns & Risk Flags
+                          </h4>
+                        </div>
+                        {aiAssessment.risk_flags && aiAssessment.risk_flags.length > 0 ? (
+                          <ul className="space-y-1.5 pl-1 text-xs text-amber-900">
+                            {aiAssessment.risk_flags.map((concern, i) => (
+                              <li key={i} className="flex items-start gap-2 leading-relaxed">
+                                <span className="text-amber-600 font-bold">•</span>
+                                <span>{concern}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-xs text-slate-500 italic">No critical concerns flagged in proposal text.</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6 px-4 bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2 text-xs text-slate-500">
+                    <Sparkles className="w-7 h-7 text-blue-600 mx-auto" />
+                    <p className="font-semibold text-slate-700">No AI-Assisted score generated yet.</p>
+                    <p className="text-[11px] text-slate-400">
+                      Click the button above to run explainable multi-factor AI shortlisting.
+                    </p>
+                    <Button
+                      variant="gov"
+                      size="sm"
+                      onClick={handleReanalyzeAi}
+                      disabled={reanalyzingAi}
+                      className="mt-2 text-xs gap-1.5"
+                    >
+                      {reanalyzingAi ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                      Generate AI-Assisted Match Score
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* STAGE 3: Expert Evaluation & Transparent Scoring Dossier */}
               <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2">
@@ -723,7 +1100,7 @@ export default function GovernmentApplicationReviewPage() {
                     value={reviewNotes}
                     onChange={(e) => setReviewNotes(e.target.value)}
                     placeholder="Enter technical comments, pilot feasibility remarks, or justification for shortlist/rejection..."
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                   />
                   <Button
                     variant="outline"
@@ -737,39 +1114,57 @@ export default function GovernmentApplicationReviewPage() {
                 </div>
               </div>
 
-              {/* Automated Eligibility Snapshot */}
-              {application.eligibility_snapshot && (
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-3 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900 uppercase tracking-wider text-[11px]">
-                      Pre-Screening Snapshot
-                    </span>
-                    <Badge
-                      variant={application.eligibility_snapshot.is_eligible ? "success" : "destructive"}
-                      className="text-[10px]"
-                    >
-                      {application.eligibility_snapshot.overall_status || "SCREENED"}
+              {/* Workflow Stepper Summary */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3 text-xs">
+                <span className="font-bold text-slate-900 uppercase tracking-wider text-[11px] block">
+                  Intake & Evaluation Journey
+                </span>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50/60 border border-emerald-100">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span className="font-semibold text-slate-800">1. Pre-Screening</span>
+                    </div>
+                    <Badge variant="success" className="text-[9px]">
+                      {application.eligibility_snapshot?.overall_status || "Screened"}
                     </Badge>
                   </div>
 
-                  <p className="text-slate-600 text-[11px]">
-                    {application.eligibility_snapshot.summary}
-                  </p>
-
-                  {application.eligibility_snapshot.mandatory_criteria && (
-                    <div className="space-y-1.5 pt-2 border-t border-slate-100">
-                      {application.eligibility_snapshot.mandatory_criteria.map((c: any, i: number) => (
-                        <div key={i} className="flex items-center justify-between py-1 border-b border-slate-50">
-                          <span className="text-slate-700 text-[11px] truncate max-w-[180px]">{c.criterion}</span>
-                          <span className={c.passed ? "text-emerald-700 font-bold" : "text-rose-600 font-bold"}>
-                            {c.passed ? "✓ Passed" : "✗ Action Req"}
-                          </span>
-                        </div>
-                      ))}
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-blue-50/60 border border-blue-100">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-blue-700 shrink-0" />
+                      <span className="font-semibold text-slate-800">2. AI-Assisted Match</span>
                     </div>
-                  )}
+                    <span className="font-extrabold text-blue-900 text-xs">
+                      {aiAssessment?.overall_score !== null && aiAssessment?.overall_score !== undefined
+                        ? `${aiAssessment.overall_score.toFixed(1)}/100`
+                        : "Pending"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-2">
+                      <Award className="w-3.5 h-3.5 text-[#0B2545] shrink-0" />
+                      <span className="font-semibold text-slate-800">3. Expert Evaluation</span>
+                    </div>
+                    <span className="font-bold text-slate-700 text-xs">
+                      {evaluationsSummary?.average_score !== null && evaluationsSummary?.average_score !== undefined
+                        ? `${evaluationsSummary.average_score.toFixed(1)}/100`
+                        : `${evaluationsSummary?.completed_evaluations_count || 0} reviews`}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-100/70 border border-slate-200">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="w-3.5 h-3.5 text-slate-700 shrink-0" />
+                      <span className="font-semibold text-slate-800">4. Official Decision</span>
+                    </div>
+                    <Badge variant="gov" className="text-[9px]">
+                      {application.status}
+                    </Badge>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -806,7 +1201,7 @@ export default function GovernmentApplicationReviewPage() {
                   value={reviewNotes}
                   onChange={(e) => setReviewNotes(e.target.value)}
                   placeholder="Provide decision rationale..."
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg text-slate-900 bg-white placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                 />
               </div>
 

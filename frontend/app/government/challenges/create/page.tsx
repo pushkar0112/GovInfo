@@ -88,6 +88,7 @@ export default function CreateChallengePage() {
 
   // Step 3: Desired Outcome
   const [desiredOutcome, setDesiredOutcome] = useState("");
+  const [outcomeTouched, setOutcomeTouched] = useState(false);
 
   // Step 4: KPIs
   const [kpis, setKpis] = useState<KPIItem[]>([
@@ -136,6 +137,64 @@ export default function CreateChallengePage() {
   const [eligibilityRequirements, setEligibilityRequirements] = useState(
     "DPIIT-recognized Indian startups with working prototype at TRL 6 or higher."
   );
+
+  const validateStep = (step: number): string | null => {
+    switch (step) {
+      case 1:
+        if (!title.trim()) return "Challenge title is required.";
+        return null;
+      case 2:
+        if (!problemStatement.trim()) return "Problem statement is required.";
+        return null;
+      case 3:
+        if (!desiredOutcome.trim() || desiredOutcome.trim().length < 10) {
+          return "Desired outcome is required and must be at least 10 characters.";
+        }
+        return null;
+      case 4:
+        if (kpis.length === 0) return "At least one measurable KPI is required.";
+        return null;
+      case 5:
+        if (!budgetMax || parseFloat(budgetMax) <= 0) return "Maximum grant budget is required.";
+        if (!applicationDeadline) return "Application submission deadline is required.";
+        return null;
+      case 6:
+        if (!eligibilityRequirements.trim()) return "Startup eligibility criteria is required.";
+        return null;
+      default:
+        return null;
+    }
+  };
+
+  const handleNextStep = () => {
+    const error = validateStep(currentStep);
+    if (error) {
+      if (currentStep === 3) setOutcomeTouched(true);
+      setErrorMessage(error);
+      return;
+    }
+    setErrorMessage(null);
+    setCurrentStep((prev) => Math.min(prev + 1, 7));
+  };
+
+  const handleStepClick = (targetStep: number) => {
+    if (targetStep <= currentStep) {
+      setErrorMessage(null);
+      setCurrentStep(targetStep);
+      return;
+    }
+    for (let s = 1; s < targetStep; s++) {
+      const err = validateStep(s);
+      if (err) {
+        if (s === 3) setOutcomeTouched(true);
+        setCurrentStep(s);
+        setErrorMessage(err);
+        return;
+      }
+    }
+    setErrorMessage(null);
+    setCurrentStep(targetStep);
+  };
 
   useEffect(() => {
     if (currentUser) {
@@ -236,6 +295,17 @@ export default function CreateChallengePage() {
   };
 
   const handlePublish = async () => {
+    // Validate all steps first
+    for (let s = 1; s <= 6; s++) {
+      const err = validateStep(s);
+      if (err) {
+        if (s === 3) setOutcomeTouched(true);
+        setCurrentStep(s);
+        setErrorMessage(err);
+        return;
+      }
+    }
+
     setSubmitting(true);
     setErrorMessage(null);
     setMissingRequirements([]);
@@ -331,7 +401,7 @@ export default function CreateChallengePage() {
                 return (
                   <button
                     key={step.id}
-                    onClick={() => setCurrentStep(step.id)}
+                    onClick={() => handleStepClick(step.id)}
                     className={`flex items-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                       isActive
                         ? "bg-[#0B2545] text-white shadow-xs"
@@ -399,7 +469,7 @@ export default function CreateChallengePage() {
                       placeholder="e.g., Autonomous Acoustic Leakage Detection in Urban Water Feeder Networks"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <span className="text-[11px] text-slate-400 mt-1 block">
                       Choose a descriptive, problem-centric title.
@@ -416,7 +486,7 @@ export default function CreateChallengePage() {
                         type="text"
                         disabled
                         value={departmentName}
-                        className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-300 rounded-lg text-xs font-medium text-slate-600 cursor-not-allowed"
+                        className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 cursor-not-allowed"
                       />
                     </div>
 
@@ -428,7 +498,7 @@ export default function CreateChallengePage() {
                         id="domain-select"
                         value={domain}
                         onChange={(e) => setDomain(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       >
                         {SECTORS.map((s) => (
                           <option key={s} value={s}>
@@ -446,7 +516,7 @@ export default function CreateChallengePage() {
                         id="geographical-scope-select"
                         value={geographicalScope}
                         onChange={(e) => setGeographicalScope(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       >
                         {SCOPES.map((sc) => (
                           <option key={sc} value={sc}>
@@ -482,7 +552,7 @@ export default function CreateChallengePage() {
                       placeholder="Describe the operational challenge, root cause, and civic impact..."
                       value={problemStatement}
                       onChange={(e) => setProblemStatement(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <div className="mt-1 flex items-center gap-1.5 text-[11px] text-amber-700 bg-amber-50 p-2 rounded-md border border-amber-200">
                       <Info className="w-3.5 h-3.5 shrink-0" />
@@ -502,7 +572,7 @@ export default function CreateChallengePage() {
                       placeholder="e.g., Manual acoustic ground listening sticks require 72 hours per reported leak; 42% non-revenue water loss currently recorded."
                       value={currentState}
                       onChange={(e) => setCurrentState(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -517,7 +587,7 @@ export default function CreateChallengePage() {
                         placeholder="Details of the field trial sandbox location and testbed size..."
                         value={challengeDescription}
                         onChange={(e) => setChallengeDescription(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       />
                     </div>
 
@@ -531,7 +601,7 @@ export default function CreateChallengePage() {
                         placeholder="e.g., Over 450,000 municipal water consumers across city zones 12 to 19."
                         value={targetBeneficiaries}
                         onChange={(e) => setTargetBeneficiaries(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       />
                     </div>
                   </div>
@@ -547,7 +617,7 @@ export default function CreateChallengePage() {
                         placeholder="e.g., Non-invasive acoustic clamp sensors, NB-IoT"
                         value={techPreferences}
                         onChange={(e) => setTechPreferences(e.target.value)}
-                        className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                        className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       />
                     </div>
 
@@ -561,7 +631,7 @@ export default function CreateChallengePage() {
                         placeholder="e.g., Must not require daytime water pressure shut-off or road digging"
                         value={techRestrictions}
                         onChange={(e) => setTechRestrictions(e.target.value)}
-                        className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                        className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       />
                     </div>
                   </div>
@@ -590,9 +660,32 @@ export default function CreateChallengePage() {
                       required
                       placeholder="e.g., Reduce non-revenue water loss by 20% across the 50 km pilot grid with pinpoint leak location accuracy within 3 meters."
                       value={desiredOutcome}
-                      onChange={(e) => setDesiredOutcome(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      onChange={(e) => {
+                        setDesiredOutcome(e.target.value);
+                        if (e.target.value.trim().length >= 10 && errorMessage?.includes("Desired outcome")) {
+                          setErrorMessage(null);
+                        }
+                      }}
+                      onBlur={() => setOutcomeTouched(true)}
+                      className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 ${
+                        (outcomeTouched && desiredOutcome.trim().length < 10)
+                          ? "border-rose-400 focus:border-rose-500 focus:ring-rose-200"
+                          : "border-slate-300 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      }`}
                     />
+                    <div className="flex items-center justify-between mt-1.5">
+                      <div>
+                        {((outcomeTouched || desiredOutcome.trim().length > 0) && desiredOutcome.trim().length < 10) && (
+                          <p className="text-xs text-rose-600 font-medium flex items-center gap-1.5">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            <span>Desired outcome is required and must be at least 10 characters.</span>
+                          </p>
+                        )}
+                      </div>
+                      <span className={`text-[11px] font-medium ${desiredOutcome.trim().length >= 10 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                        {desiredOutcome.trim().length}/10 min characters
+                      </span>
+                    </div>
                     <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start gap-2">
                       <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                       <div>
@@ -803,7 +896,7 @@ export default function CreateChallengePage() {
                       type="number"
                       value={budgetMin}
                       onChange={(e) => setBudgetMin(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -817,7 +910,7 @@ export default function CreateChallengePage() {
                       required
                       value={budgetMax}
                       onChange={(e) => setBudgetMax(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -830,7 +923,7 @@ export default function CreateChallengePage() {
                       type="number"
                       value={pilotDurationDays}
                       onChange={(e) => setPilotDurationDays(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                     <span className="text-[11px] text-slate-400 mt-1 block">
                       Typically 90–180 days for rapid municipal sandbox validation.
@@ -847,7 +940,7 @@ export default function CreateChallengePage() {
                       required
                       value={applicationDeadline}
                       onChange={(e) => setApplicationDeadline(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -860,7 +953,7 @@ export default function CreateChallengePage() {
                       type="date"
                       value={pilotStartDate}
                       onChange={(e) => setPilotStartDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
                 </div>
@@ -887,7 +980,7 @@ export default function CreateChallengePage() {
                       rows={2}
                       value={dataRequirements}
                       onChange={(e) => setDataRequirements(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -900,7 +993,7 @@ export default function CreateChallengePage() {
                       rows={2}
                       value={securityRequirements}
                       onChange={(e) => setSecurityRequirements(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -913,7 +1006,7 @@ export default function CreateChallengePage() {
                       rows={2}
                       value={complianceRequirements}
                       onChange={(e) => setComplianceRequirements(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -926,7 +1019,7 @@ export default function CreateChallengePage() {
                       rows={2}
                       value={ipRequirements}
                       onChange={(e) => setIpRequirements(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
 
@@ -940,7 +1033,7 @@ export default function CreateChallengePage() {
                       required
                       value={eligibilityRequirements}
                       onChange={(e) => setEligibilityRequirements(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 caret-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                     />
                   </div>
                 </div>
@@ -976,9 +1069,35 @@ export default function CreateChallengePage() {
                       <p className="text-slate-600 leading-relaxed">{problemStatement || "—"}</p>
                     </div>
 
-                    <div className="p-4 rounded-xl border border-blue-100 bg-blue-50/50 space-y-1">
-                      <span className="font-bold text-blue-950 block">Target Desired Outcome</span>
-                      <p className="text-blue-900 leading-relaxed">{desiredOutcome || "—"}</p>
+                    <div className={`p-4 rounded-xl border space-y-1.5 ${
+                      desiredOutcome.trim().length >= 10
+                        ? "border-blue-100 bg-blue-50/50"
+                        : "border-rose-200 bg-rose-50/50"
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-800 block">Target Desired Outcome</span>
+                        {desiredOutcome.trim().length < 10 && (
+                          <Badge variant="destructive" className="text-[10px]">
+                            Action Required (&ge; 10 chars)
+                          </Badge>
+                        )}
+                      </div>
+                      {desiredOutcome.trim().length >= 10 ? (
+                        <p className="text-blue-900 leading-relaxed font-medium">{desiredOutcome}</p>
+                      ) : (
+                        <div className="text-rose-700 text-xs font-medium space-y-1.5">
+                          <p>Desired outcome is required and must be at least 10 characters.</p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentStep(3)}
+                            className="text-xs text-rose-700 border-rose-300 hover:bg-rose-100/70"
+                          >
+                            Edit Desired Outcome in Step 3 →
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1063,7 +1182,7 @@ export default function CreateChallengePage() {
                     type="button"
                     variant="gov"
                     size="sm"
-                    onClick={() => setCurrentStep(currentStep + 1)}
+                    onClick={handleNextStep}
                     className="text-xs gap-1.5 font-semibold"
                   >
                     Next Step <ArrowRight className="w-3.5 h-3.5" />

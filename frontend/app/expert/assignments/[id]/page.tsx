@@ -676,7 +676,7 @@ export default function ExpertEvaluationWorkspacePage() {
                         value={coiReason}
                         onChange={(e) => setCoiReason(e.target.value)}
                         placeholder="Optional remarks or details regarding your declaration..."
-                        className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545]"
+                        className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545]"
                       />
                     </div>
 
@@ -813,7 +813,7 @@ export default function ExpertEvaluationWorkspacePage() {
                                   step={0.1}
                                   value={rawScore}
                                   onChange={(e) => handleScoreChange(criterion.id, parseFloat(e.target.value) || 0, maxScore)}
-                                  className="w-20 px-2 py-1 text-xs font-bold text-right border border-slate-300 rounded-md focus:ring-1 focus:ring-[#0B2545] disabled:bg-slate-100"
+                                  className="w-20 px-2 py-1 text-xs font-bold text-right border border-slate-300 bg-white text-slate-900 caret-slate-900 rounded-md focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545] disabled:bg-slate-100"
                                 />
                                 <span className="text-xs text-slate-400 font-medium">/ {maxScore}</span>
                               </div>
@@ -843,7 +843,7 @@ export default function ExpertEvaluationWorkspacePage() {
                                 value={state.comment}
                                 onChange={(e) => handleFieldChange(criterion.id, "comment", e.target.value)}
                                 placeholder="Explain reasoning behind this score..."
-                                className="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545] disabled:bg-slate-50"
+                                className="w-full px-2.5 py-1.5 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545] disabled:bg-slate-50"
                               />
                             </div>
 
@@ -857,7 +857,7 @@ export default function ExpertEvaluationWorkspacePage() {
                                 value={state.evidence_reference}
                                 onChange={(e) => handleFieldChange(criterion.id, "evidence_reference", e.target.value)}
                                 placeholder="e.g. Page 4, Architecture Diagram"
-                                className="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545] disabled:bg-slate-50"
+                                className="w-full px-2.5 py-1.5 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545] disabled:bg-slate-50"
                               />
                             </div>
                           </div>
@@ -880,7 +880,7 @@ export default function ExpertEvaluationWorkspacePage() {
                         disabled={isSubmitted}
                         value={recommendation}
                         onChange={(e) => setRecommendation(e.target.value)}
-                        className="w-full px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545] disabled:bg-slate-50"
+                        className="w-full px-3 py-2 text-xs font-semibold border border-slate-300 bg-white text-slate-900 rounded-lg focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545] disabled:bg-slate-50"
                       >
                         <option value="STRONGLY_RECOMMEND">STRONGLY RECOMMEND — Exceptional prototype and alignment</option>
                         <option value="RECOMMEND">RECOMMEND — Solid proposal viable for pilot phase</option>
@@ -899,7 +899,7 @@ export default function ExpertEvaluationWorkspacePage() {
                         value={overallComments}
                         onChange={(e) => setOverallComments(e.target.value)}
                         placeholder="Comprehensive evaluator remarks for the Government procurement committee..."
-                        className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-[#0B2545] disabled:bg-slate-50"
+                        className="w-full px-3 py-2 text-xs border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 caret-slate-900 rounded-lg focus:ring-2 focus:ring-[#0B2545]/20 focus:border-[#0B2545] disabled:bg-slate-50"
                       />
                     </div>
                   </div>

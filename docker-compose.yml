@@ -1,23 +1,18 @@
-version: "3.8"
-
 services:
   # ----------------------------------------------------------------------------
   # PostgreSQL Database Service
   # ----------------------------------------------------------------------------
   postgres:
     image: postgres:16-alpine
-    container_name: govinnovate-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-govinnovate}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-govinnovate_secure_pass}
       POSTGRES_DB: ${POSTGRES_DB:-govinnovate_db}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-govinnovate} -d ${POSTGRES_DB:-govinnovate_db}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-govinnovate} -d ${POSTGRES_DB:-govinnovate_db}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,7 +27,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: govinnovate-backend
     restart: unless-stopped
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
@@ -57,7 +51,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: govinnovate-frontend
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}

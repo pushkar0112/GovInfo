@@ -6,6 +6,7 @@ from app.models.challenge import Challenge, ChallengeStatus
 from app.models.challenge_kpi import ChallengeKPI
 from app.models.application import Application, ApplicationStatus
 from app.models.evaluation import Evaluation, EvaluationRecommendation
+from app.models.ai_assessment import AIAssessment, AIAssessmentStatus, AIRecommendation
 from app.models.evaluation_criteria import EvaluationCriteria
 from app.models.expert_profile import ExpertProfile, ExpertAvailability
 from app.models.evaluation_assignment import EvaluationAssignment, AssignmentStatus
@@ -123,6 +124,9 @@ __all__ = [
     "ChallengeKPI",
     "Application",
     "ApplicationStatus",
+    "AIAssessment",
+    "AIAssessmentStatus",
+    "AIRecommendation",
     "Evaluation",
     "EvaluationRecommendation",
     "EvaluationCriteria",
